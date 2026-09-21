@@ -11,6 +11,7 @@ class PetWidget(QWidget):
         self._config = config
         self._panel = None
         self._drag_pos = QPoint()
+        self._press_pos = QPoint()
         self._setup_window()
         self._load_skin(config.get("current_skin"))
 
@@ -30,15 +31,22 @@ class PetWidget(QWidget):
         self._label.resize(120, 120)
 
     def _load_skin(self, path: str):
-        if not path or not os.path.exists(path):
-            path = "assets/default_pet.gif"
-        if path.lower().endswith(".gif"):
-            self._movie = QMovie(path)
-            self._label.setMovie(self._movie)
-            self._movie.start()
+        if path and os.path.exists(path):
+            if path.lower().endswith(".gif"):
+                self._movie = QMovie(path)
+                self._label.setMovie(self._movie)
+                self._movie.start()
+            else:
+                pixmap = QPixmap(path).scaled(120, 120, Qt.AspectRatioMode.KeepAspectRatio)
+                self._label.setPixmap(pixmap)
         else:
-            pixmap = QPixmap(path).scaled(120, 120, Qt.AspectRatioMode.KeepAspectRatio)
-            self._label.setPixmap(pixmap)
+            # 无皮肤文件时显示占位符
+            self._label.setText("🐾\n点击\n换皮")
+            self._label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self._label.setStyleSheet(
+                "background: rgba(100,180,255,180); border-radius: 16px; "
+                "color: white; font-size: 14px; font-weight: bold;"
+            )
 
     def set_panel(self, panel):
         self._panel = panel
@@ -46,6 +54,7 @@ class PetWidget(QWidget):
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            self._press_pos = event.globalPosition().toPoint()
             event.accept()
         elif event.button() == Qt.MouseButton.RightButton:
             self._show_context_menu(event.globalPosition().toPoint())
@@ -60,7 +69,7 @@ class PetWidget(QWidget):
             pos = self.pos()
             self._config.set("window_x", pos.x())
             self._config.set("window_y", pos.y())
-            moved = (event.globalPosition().toPoint() - self._drag_pos - self.pos()).manhattanLength()
+            moved = (event.globalPosition().toPoint() - self._press_pos).manhattanLength()
             if moved < 5 and self._panel:
                 self._toggle_panel()
 

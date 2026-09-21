@@ -40,10 +40,11 @@ class PanelWidget(QWidget):
 
         replicate_key = config.get("replicate_api_key") or ""
         generator = SkinGenerator(replicate_api_key=replicate_key)
-        tabs.addTab(SkinTab(generator), "🎨 换皮")
+        skin_tab_widget = SkinTab(generator, replicate_api_key=replicate_key)
+        tabs.addTab(skin_tab_widget, "🎨 换皮")
 
         layout.addWidget(tabs)
-        self._skin_tab = tabs.widget(3)
+        self._skin_tab = skin_tab_widget
 
     def set_pet_widget(self, pet):
         self._skin_tab.skin_changed = pet.reload_skin

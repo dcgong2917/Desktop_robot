@@ -11,9 +11,10 @@ from workers.async_worker import AsyncWorker
 class SkinTab(QWidget):
     skin_changed = None  # 外部设置为回调函数 fn(path)
 
-    def __init__(self, generator: SkinGenerator):
+    def __init__(self, generator: SkinGenerator, replicate_api_key: str = ""):
         super().__init__()
         self._gen = generator
+        self._has_key = bool(replicate_api_key)
         self._preview_path = None
         self._worker = None
 
@@ -45,6 +46,9 @@ class SkinTab(QWidget):
         layout.addWidget(self._apply_btn)
 
     def _upload_image(self):
+        if not self._has_key:
+            self._status.setText("请先在配置中填写 Replicate API Key")
+            return
         path, _ = QFileDialog.getOpenFileName(self, "选择图片", "", "图片 (*.png *.jpg *.jpeg)")
         if path:
             self._status.setText("生成中...")
@@ -54,6 +58,9 @@ class SkinTab(QWidget):
             self._worker.start()
 
     def _generate_from_text(self):
+        if not self._has_key:
+            self._status.setText("请先在配置中填写 Replicate API Key")
+            return
         desc = self._desc_input.text().strip()
         if not desc:
             self._status.setText("请输入描述")
