@@ -32,6 +32,14 @@
 - 使用智谱 CogView-3-flash 生成 + rembg 自动抠除背景（透明底）
 - **历史皮肤**：每次生成的角色都会保存，可随时点击缩略图切回
 
+## 📸 功能演示
+
+| 📋 剪贴板 | 🔥 热榜 |
+|:---:|:---:|
+| ![剪贴板](docs/screenshots/clipboard.png) | ![热榜](docs/screenshots/news.png) |
+| **🎵 音乐推荐** | **🎨 AI 换皮** |
+| ![音乐](docs/screenshots/music.png) | ![换皮](docs/screenshots/skin.png) |
+
 ## 🛠️ 技术栈
 
 | 组件 | 用途 |
