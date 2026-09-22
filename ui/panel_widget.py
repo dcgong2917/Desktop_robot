@@ -24,7 +24,7 @@ class PanelWidget(QWidget):
         self.setFixedSize(380, 480)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(8, 8, 8, 8)
 
         tabs = QTabWidget()
 
@@ -38,9 +38,9 @@ class PanelWidget(QWidget):
         recommender = MusicRecommender(ai_client)
         tabs.addTab(MusicTab(recommender), "🎵 音乐")
 
-        replicate_key = config.get("replicate_api_key") or ""
-        generator = SkinGenerator(replicate_api_key=replicate_key)
-        skin_tab_widget = SkinTab(generator, replicate_api_key=replicate_key)
+        zhipu_key = config.get("zhipu_api_key") or ""
+        generator = SkinGenerator(api_key=zhipu_key)
+        skin_tab_widget = SkinTab(generator, config, replicate_api_key=zhipu_key)
         tabs.addTab(skin_tab_widget, "🎨 换皮")
 
         layout.addWidget(tabs)

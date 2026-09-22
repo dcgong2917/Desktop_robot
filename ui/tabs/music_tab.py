@@ -60,7 +60,7 @@ class MusicTab(QWidget):
         info.setWordWrap(True)
         row.addWidget(info, stretch=1)
         btn = QPushButton("去听")
-        url = self._rec.get_netease_url(song["title"], song["artist"])
+        url = self._rec.get_qq_music_url(song["title"], song["artist"])
         btn.clicked.connect(lambda _, u=url: webbrowser.open(u))
         row.addWidget(btn)
         self._result_layout.addWidget(frame)

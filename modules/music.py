@@ -26,6 +26,6 @@ class MusicRecommender:
             })
         return results
 
-    def get_netease_url(self, title: str, artist: str) -> str:
+    def get_qq_music_url(self, title: str, artist: str) -> str:
         query = urllib.parse.quote(f"{title} {artist}")
-        return f"https://music.163.com/#/search/m/?s={query}&type=1"
+        return f"https://y.qq.com/n/ryqq/search?w={query}&t=song"

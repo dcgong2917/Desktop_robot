@@ -1,25 +1,22 @@
 import pyperclip
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-    QListWidget, QListWidgetItem, QDialog, QLineEdit,
-    QLabel, QTextEdit, QMenu, QMessageBox
+    QListWidget, QListWidgetItem, QDialog,
+    QLabel, QTextEdit, QMenu
 )
 from PyQt6.QtCore import Qt
 from modules.clipboard import ClipboardManager
 
 
 class AddEditDialog(QDialog):
-    def __init__(self, parent=None, name="", content=""):
+    def __init__(self, parent=None, content=""):
         super().__init__(parent)
         self.setWindowTitle("添加/编辑")
-        self.setFixedSize(320, 200)
+        self.setFixedSize(320, 150)
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("名称"))
-        self.name_input = QLineEdit(name)
-        layout.addWidget(self.name_input)
         layout.addWidget(QLabel("内容"))
         self.content_input = QTextEdit(content)
-        self.content_input.setFixedHeight(80)
+        self.content_input.setFixedHeight(70)
         layout.addWidget(self.content_input)
         btn_row = QHBoxLayout()
         ok_btn = QPushButton("确定")
@@ -55,8 +52,8 @@ class ClipboardTab(QWidget):
     def _refresh_list(self):
         self._list.clear()
         for item in self._mgr.list():
-            preview = item["content"][:40] + ("..." if len(item["content"]) > 40 else "")
-            list_item = QListWidgetItem(f"{item['name']}\n{preview}")
+            preview = item["content"][:60] + ("..." if len(item["content"]) > 60 else "")
+            list_item = QListWidgetItem(preview)
             list_item.setData(Qt.ItemDataRole.UserRole, item["id"])
             self._list.addItem(list_item)
 
@@ -71,10 +68,9 @@ class ClipboardTab(QWidget):
     def _add_item(self):
         dlg = AddEditDialog(self)
         if dlg.exec():
-            name = dlg.name_input.text().strip()
             content = dlg.content_input.toPlainText().strip()
-            if name and content:
-                self._mgr.add(name, content)
+            if content:
+                self._mgr.add(content)
                 self._refresh_list()
 
     def _show_context_menu(self, pos):
@@ -94,9 +90,9 @@ class ClipboardTab(QWidget):
     def _edit_item(self, item_id):
         for item in self._mgr.list():
             if item["id"] == item_id:
-                dlg = AddEditDialog(self, item["name"], item["content"])
+                dlg = AddEditDialog(self, item["content"])
                 if dlg.exec():
-                    self._mgr.update(item_id, dlg.name_input.text(), dlg.content_input.toPlainText())
+                    self._mgr.update(item_id, content=dlg.content_input.toPlainText())
                     self._refresh_list()
                 break
 

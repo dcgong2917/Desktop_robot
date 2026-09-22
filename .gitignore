@@ -1,0 +1,27 @@
+# 敏感配置（含 API Key）
+data/
+
+# 生成的皮肤图片（保留默认图）
+assets/pet_*.png
+assets/raw_*.png
+assets/custom_pet*.png
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# PyInstaller 打包产物
+build/
+dist/
+*.spec
+
+# 环境
+.venv/
+venv/
+.superpowers/
+
+# IDE
+.vscode/
+.idea/

@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-    QTextEdit, QLineEdit, QLabel
+    QTextEdit, QLineEdit, QLabel, QComboBox
 )
-from PyQt6.QtCore import Qt
-from modules.news import NewsFetcher
+from modules.news import NewsFetcher, CATEGORIES
 from services.zhipu_client import ZhipuClient
 from workers.async_worker import AsyncWorker
 
@@ -18,9 +17,15 @@ class NewsTab(QWidget):
 
         layout = QVBoxLayout(self)
 
+        top_row = QHBoxLayout()
+        top_row.addWidget(QLabel("分类："))
+        self._category_box = QComboBox()
+        self._category_box.addItems(list(CATEGORIES.keys()))
+        top_row.addWidget(self._category_box, stretch=1)
         refresh_btn = QPushButton("刷新热榜")
         refresh_btn.clicked.connect(self._refresh)
-        layout.addWidget(refresh_btn)
+        top_row.addWidget(refresh_btn)
+        layout.addLayout(top_row)
 
         self._chat_display = QTextEdit()
         self._chat_display.setReadOnly(True)
@@ -40,22 +45,23 @@ class NewsTab(QWidget):
         self._chat_display.setText("正在获取热榜...")
         self._history = []
         self._worker = AsyncWorker(self._fetch_and_summarize)
-        self._worker.result_ready.connect(self._on_summary_ready)
+        self._worker.result_ready.connect(self._chat_display.setText)
         self._worker.error_occurred.connect(lambda e: self._chat_display.setText(f"获取失败：{e}"))
         self._worker.start()
 
     def _fetch_and_summarize(self):
-        items = self._fetcher.fetch_all()
+        category = self._category_box.currentText()
+        items, err = self._fetcher.fetch_category(category)
         if not items:
-            return "暂时无法获取热榜数据，请检查网络连接。"
-        prompt = self._fetcher.format_for_ai(items)
-        self._history.append({"role": "user", "content": prompt})
-        reply = self._ai.chat(self._history)
-        self._history.append({"role": "assistant", "content": reply})
-        return reply
-
-    def _on_summary_ready(self, text):
-        self._chat_display.setText(text)
+            return f"暂时无法获取热榜数据。\n\n详细错误：\n{err}"
+        lines = [f"📰 {category} 热榜\n"]
+        for i, item in enumerate(items, 1):
+            lines.append(f"{i}. {item['title']}")
+        lines.append("\n💬 可以在下方追问任意内容")
+        result = "\n".join(lines)
+        self._history = [{"role": "user", "content": self._fetcher.format_for_ai(items)},
+                         {"role": "assistant", "content": result}]
+        return result
 
     def _send_question(self):
         question = self._input.text().strip()

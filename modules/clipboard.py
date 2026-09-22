@@ -16,10 +16,9 @@ class ClipboardManager:
     def list(self) -> list[dict]:
         return list(self._items)
 
-    def add(self, name: str, content: str):
+    def add(self, content: str):
         item = {
             "id": str(uuid.uuid4()),
-            "name": name,
             "content": content,
             "created_at": datetime.now().isoformat(),
         }
@@ -30,11 +29,9 @@ class ClipboardManager:
         self._items = [i for i in self._items if i["id"] != item_id]
         self._save()
 
-    def update(self, item_id: str, name: str = None, content: str = None):
+    def update(self, item_id: str, content: str = None):
         for item in self._items:
             if item["id"] == item_id:
-                if name is not None:
-                    item["name"] = name
                 if content is not None:
                     item["content"] = content
                 break

@@ -3,10 +3,10 @@ import os
 
 _DEFAULTS = {
     "zhipu_api_key": "",
-    "replicate_api_key": "",
     "window_x": 100,
     "window_y": 100,
-    "current_skin": "assets/default_pet.gif",
+    "current_skin": "assets/default_pet.png",
+    "skin_history": ["assets/default_pet.png"],
 }
 
 
@@ -22,7 +22,7 @@ class Config:
             self._save()
 
     def get(self, key):
-        return self._data.get(key)
+        return self._data.get(key, _DEFAULTS.get(key))
 
     def set(self, key, value):
         self._data[key] = value

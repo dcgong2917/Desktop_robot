@@ -5,11 +5,13 @@ from config import Config
 from ui.pet_widget import PetWidget
 from ui.panel_widget import PanelWidget
 from ui.setup_dialog import SetupDialog
+from ui.style import STYLESHEET
 
 
 def main():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
+    app.setStyleSheet(STYLESHEET)
 
     config = Config()
 
@@ -18,7 +20,6 @@ def main():
         dlg = SetupDialog()
         if dlg.exec():
             config.set("zhipu_api_key", dlg.zhipu_key_input.text().strip())
-            config.set("replicate_api_key", dlg.replicate_key_input.text().strip())
         else:
             sys.exit(0)
 
