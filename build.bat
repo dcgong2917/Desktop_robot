@@ -3,6 +3,7 @@ pyinstaller ^
   --windowed ^
   --name robot ^
   --add-data "assets;assets" ^
+  --add-data "models;models" ^
   --hidden-import="rembg" ^
   --hidden-import="onnxruntime" ^
   --hidden-import="bs4" ^

@@ -1,7 +1,20 @@
 import os
+import sys
 import base64
 import httpx
 from zhipuai import ZhipuAI
+
+
+def _setup_rembg_model_dir():
+    """让 rembg 使用打包/项目内自带的模型，避免运行时联网下载。"""
+    # PyInstaller 打包后资源解压在 sys._MEIPASS，否则用项目根目录
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    bundled = os.path.join(base, "models")
+    if os.path.exists(os.path.join(bundled, "u2netp.onnx")):
+        os.environ["U2NET_HOME"] = bundled
+
+
+_setup_rembg_model_dir()
 from rembg import remove, new_session
 
 
